@@ -1,0 +1,7 @@
+*.userprefs
+[Oo]bj/
+[Bb]in/
+.vs/
+.idea/
+.vscode/ 
+.DS_Store
