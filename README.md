@@ -1,3 +1,8 @@
+
+## Install
+
+`dotnet add package SimpleEnv`
+
 ## Examples
 
 Example for static classes:
