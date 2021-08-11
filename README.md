@@ -1,4 +1,3 @@
-
 ## Install
 
 `dotnet add package SimpleEnv`
