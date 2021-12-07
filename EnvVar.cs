@@ -2,7 +2,7 @@ using System;
 
 namespace SimpleEnv
 {
-	[AttributeUsage(AttributeTargets.Property)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public class EnvVar : Attribute
 	{
 		public EnvVar(string name) => Name = name;
