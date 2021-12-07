@@ -18,10 +18,11 @@ namespace SimpleEnv
 
 			_env = null;
 
-			var props = type.GetProperties(Flags);
+			var props = type.GetMembers(Flags);
 
 			foreach (var prop in props)
-				FillProp(prop, null);
+				if (prop is PropertyInfo || prop is FieldInfo)
+					FillProp(prop, null);
 		}
 
 		public static void Fill<T>(ref T obj) where T : class
@@ -32,21 +33,27 @@ namespace SimpleEnv
 
 			_env = null;
 
-			var props = obj.GetType().GetProperties(Flags);
+			var props = obj.GetType().GetMembers(Flags);
 
 			foreach (var prop in props)
-				FillProp(prop, obj);
+				if (prop is PropertyInfo || prop is FieldInfo)
+					FillProp(prop, obj);
 		}
 
-		private static void FillProp(PropertyInfo prop, object obj)
+		private static void FillProp(MemberInfo prop, object obj)
 		{
-			if (prop.PropertyType.IsClass && prop.PropertyType != typeof(string))
+			var memberType = (prop as PropertyInfo)?.PropertyType ?? (prop as FieldInfo)!.FieldType;
+			if (memberType.IsClass && memberType != typeof(string))
 			{
 				try
 				{
-					var val = Activator.CreateInstance(prop.PropertyType);
+					var val = Activator.CreateInstance(memberType);
 					Fill(ref val);
-					prop.SetValue(obj, val);
+
+					if (prop is PropertyInfo)
+						(prop as PropertyInfo).SetValue(obj, val);
+					else
+						(prop as FieldInfo)!.SetValue(obj, val);
 				}
 				catch (Exception)
 				{
@@ -63,7 +70,7 @@ namespace SimpleEnv
 				return;
 
 			(_env ?? (_env = GetEnv())).TryGetValue(attr.Name.ToUpper(), out var envVal);
-			
+
 			if (envVal == null)
 				envVal = attr.DefaultValue;
 
@@ -72,8 +79,12 @@ namespace SimpleEnv
 
 			try
 			{
-				var val = Convert.ChangeType(envVal, prop.PropertyType);
-				prop.SetValue(obj, val);
+				var val = Convert.ChangeType(envVal, memberType);
+
+				if (prop is PropertyInfo)
+					(prop as PropertyInfo).SetValue(obj, val);
+				else
+					(prop as FieldInfo)!.SetValue(obj, val);
 			}
 			catch (Exception)
 			{
