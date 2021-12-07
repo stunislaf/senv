@@ -8,4 +8,9 @@
         <Authors>stunislaf</Authors>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Remove="tests\**" />
+        <Compile Remove="tests\**" />
+    </ItemGroup>
+
 </Project>
