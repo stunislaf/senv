@@ -63,6 +63,9 @@ namespace SimpleEnv
 				return;
 
 			(_env ?? (_env = GetEnv())).TryGetValue(attr.Name.ToUpper(), out var envVal);
+			
+			if (envVal == null)
+				envVal = attr.DefaultValue;
 
 			if (envVal == null)
 				return;
