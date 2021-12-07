@@ -14,7 +14,7 @@ jobs:
         run: |
           ref="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
           echo GITHUB_REF - $ref
-          sed -i "s|<Version>0.0.0</Version>|<Version>${ref}</Version>|g" SimpleEnv.csproj
+          sed -i "s|<Version>0.0.0</Version>|<Version>${ref:1}</Version>|g" SimpleEnv.csproj
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
