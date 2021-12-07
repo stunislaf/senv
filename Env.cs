@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 
 namespace SimpleEnv
@@ -10,6 +11,32 @@ namespace SimpleEnv
 	{
 		private const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
 		private static Dictionary<string, object> _env = new();
+
+		public static void FillStaticClass(string filename, Type type)
+		{
+			LoadEnvFile(filename);
+			FillStaticClass(type);
+		}
+
+		private static void LoadEnvFile(string filename)
+		{
+			var lines = File.ReadAllLines(filename);
+			for (var i = 0; i < lines.Length; i++)
+			{
+				var (key, value) = ParseLine(lines[i]);
+				Environment.SetEnvironmentVariable(key, value);
+			}
+		}
+
+		private static (string key, string value) ParseLine(string line)
+		{
+			var separatorIndex = line.IndexOf('=');
+			if (separatorIndex == -1)
+				throw new Exception("invalid string format: " + line);
+			var key = line.Substring(0, separatorIndex);
+			var value = line.Substring(separatorIndex);
+			return (key, value);
+		}
 
 		public static void FillStaticClass(Type type)
 		{
@@ -23,6 +50,12 @@ namespace SimpleEnv
 			foreach (var prop in props)
 				if (prop is PropertyInfo || prop is FieldInfo)
 					FillProp(prop, null);
+		}
+
+		public static void Fill<T>(string filename, ref T obj) where T : class
+		{
+			LoadEnvFile(filename);
+			Fill(ref obj);
 		}
 
 		public static void Fill<T>(ref T obj) where T : class
