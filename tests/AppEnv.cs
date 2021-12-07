@@ -5,7 +5,7 @@ namespace Tests
 	public class AppEnv
 	{
 		[EnvVar("")]
-		public EnvHostVar? Host { get; set; }
+		public EnvHostVar? Host;
 
 		[EnvVar("TOKEN")]
 		public string? Token { get; set; }
