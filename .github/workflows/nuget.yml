@@ -14,8 +14,7 @@ jobs:
         run: |
           ref="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
           echo GITHUB_REF - $ref
-          echo $ref >> version.tmp
-          cat version.tmp
+          sed -i "s|<Version>0.0.0</Version>|<Version>${ref}</Version>|g" SimpleEnv.csproj
 
       - name: Setup dotnet
         uses: actions/setup-dotnet@v1
@@ -29,6 +28,4 @@ jobs:
         with:
           PROJECT_FILE_PATH: SimpleEnv.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          VERSION_FILE_PATH: version.tmp
-          VERSION_REGEX: v(.*)
           TAG_COMMIT: false
