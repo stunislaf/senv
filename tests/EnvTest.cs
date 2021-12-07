@@ -48,5 +48,25 @@ namespace Tests
 			Assert.Equal(token, StaticAppEnv.Token);
 			Assert.Equal(debug, StaticAppEnv.Debug);
 		}
+
+		[Fact]
+		public void FillWithFile()
+		{
+			var (hostName, hostPort, token, debug) = InitProcessEnv();
+
+			var env = new AppEnv();
+			SimpleEnv.Env.Fill("./testenv", ref env);
+
+			Assert.Equal(hostName, env.Host!.Name);
+			Assert.Equal("0.0.0.0", env.Host.DefaultName);
+			Assert.Equal(hostPort, env.Host.Port);
+			Assert.Equal(token, env.Token);
+			Assert.Equal(debug, env.Debug);
+
+			Assert.Equal("127.0.0.1", env.Host.FileName);
+			Assert.Equal(8081, env.Host.FilePort);
+			Assert.Equal("X-JWT", env.FileToken);
+			Assert.Equal(true, env.FileDebug);
+		}
 	}
 }
