@@ -34,7 +34,7 @@ namespace SimpleEnv
 			if (separatorIndex == -1)
 				throw new Exception("invalid string format: " + line);
 			var key = line.Substring(0, separatorIndex);
-			var value = line.Substring(separatorIndex);
+			var value = line.Substring(separatorIndex + 1);
 			return (key, value);
 		}
 
@@ -88,10 +88,11 @@ namespace SimpleEnv
 					else
 						(prop as FieldInfo)!.SetValue(obj, val);
 				}
-				catch (Exception)
+				catch
 				{
-					return;
+					// ignored
 				}
+				return;
 			}
 
 			var ignoreAttr = prop.GetCustomAttribute<IgnoreEnv>();
